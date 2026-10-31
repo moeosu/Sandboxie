@@ -33,6 +33,7 @@
 #include <QSessionManager>
 #include "Helpers/FullScreen.h"
 #include "Helpers/StorageInfo.h"
+#include "Windows/ShellBoxSelector.h"
 #include "Helpers/WinHelper.h"
 #include "../QSbieAPI/Helpers/DbgHelper.h"
 #include "Windows/BoxImageWindow.h"
@@ -1682,11 +1683,6 @@ void CSandMan::OnRestartAsAdmin()
 void CSandMan::OnExit()
 {
 	m_bExit = true;
-	if (theConf->GetBool("Options/TerminateWhenExit", false)) {
-		if (theAPI->IsConnected()) {
-			theAPI->TerminateAll(!theConf->GetBool("Options/ExceptWhenAutoTerminate", false));
-		}
-	}
 	close();
 }
 
@@ -1717,11 +1713,10 @@ void CSandMan::closeEvent(QCloseEvent *e)
 		}
 	}
 
-	emit Closed();
-
+	int PortableStop = 0;
 	if (IsFullyPortable() && theAPI->IsConnected())
 	{
-		int PortableStop = theConf->GetInt("Options/PortableStop", -1);
+		PortableStop = theConf->GetInt("Options/PortableStop", -1);
 		if (PortableStop == -1)
 		{
 			bool State = false;
@@ -1739,11 +1734,16 @@ void CSandMan::closeEvent(QCloseEvent *e)
 			if (State)
 				theConf->SetValue("Options/PortableStop", PortableStop);
 		}
+	}
 
-		if (PortableStop == 1) {
-			SB_RESULT(void*) Status = StopSbie(true);
-			// don't care for Status we quit here anyway
-		}
+	emit Closed();
+
+	if (PortableStop == 1) {
+		SB_RESULT(void*) Status = StopSbie(true);
+		// don't care for Status we quit here anyway
+	}
+	else if (theAPI->IsConnected() && theConf->GetBool("Options/TerminateWhenExit", false)) {
+		theAPI->TerminateAll(!theConf->GetBool("Options/ExceptWhenAutoTerminate", false));
 	}
 
 	QApplication::quit();
@@ -2006,50 +2006,32 @@ void CSandMan::OnMessage(const QString& MsgData)
 	}
 	else if (Message.left(9) == "AddForce:")
 	{
-		QString response = QInputDialog::getText(g_GUIParent, tr("Which box you want to add in?"), tr("Type the box name which you are going to set:"));
-		if (!response.isEmpty())
+		CSandBoxPtr pBox = SelectBoxForShellAction(g_GUIParent);
+		if (pBox)
 		{
-			if (theAPI->GetBoxByName(response) != NULL) {
-				QString dirOrFile = Message.mid(9).replace("\"", "").trimmed();
-				QFileInfo fileInfo(dirOrFile);
-				if (Message.right(1) == "\\" || !Message.contains(".", Qt::CaseInsensitive)) {
-					theAPI->GetBoxByName(response)->AppendText("ForceFolder", dirOrFile);
-				}
-				else {
-					if (fileInfo.exists() && fileInfo.isDir()) {
-						theAPI->GetBoxByName(response)->AppendText("ForceFolder", dirOrFile);
-					}
-					else if (fileInfo.exists() && fileInfo.isExecutable()) {
-						theAPI->GetBoxByName(response)->AppendText("ForceProcess", dirOrFile.mid(dirOrFile.lastIndexOf("\\") + 1));
-					}
-					else {
-						QMessageBox::warning(g_GUIParent, tr("Sandboxie-Plus Warning"), tr("The value is not an existing directory or executable."), QMessageBox::Ok, 0);
-					}
-				}
+			QString dirOrFile = Message.mid(9).replace("\"", "").trimmed();
+			QFileInfo fileInfo(dirOrFile);
+			if (Message.right(1) == "\\" || !Message.contains(".", Qt::CaseInsensitive)) {
+				pBox->AppendText("ForceFolder", dirOrFile);
 			}
 			else {
-				QMessageBox::warning(g_GUIParent, tr("Sandboxie-Plus Warning"), tr("You typed a wrong box name! Nothing was changed."), QMessageBox::Ok, 0);
+				if (fileInfo.exists() && fileInfo.isDir()) {
+					pBox->AppendText("ForceFolder", dirOrFile);
+				}
+				else if (fileInfo.exists() && fileInfo.isExecutable()) {
+					pBox->AppendText("ForceProcess", dirOrFile.mid(dirOrFile.lastIndexOf("\\") + 1));
+				}
+				else {
+					QMessageBox::warning(g_GUIParent, tr("Sandboxie-Plus Warning"), tr("The value is not an existing directory or executable."), QMessageBox::Ok, 0);
+				}
 			}
-		}
-		else {
-			QMessageBox::warning(g_GUIParent, tr("Sandboxie-Plus Warning"), tr("User canceled this operation."), QMessageBox::Yes, 0);
 		}
 	}
 	else if (Message.left(8) == "AddOpen:")
 	{
-		QString response = QInputDialog::getText(g_GUIParent, tr("Which box you want to add in?"), tr("Type the box name which you are going to set:"));
-		if (!response.isEmpty())
-		{
-			if (theAPI->GetBoxByName(response) != NULL) {
-					theAPI->GetBoxByName(response)->AppendText("OpenFilePath", Message.mid(8).replace("\"", ""));
-			}
-			else {
-				QMessageBox::warning(g_GUIParent, tr("Sandboxie-Plus Warning"), tr("You typed a wrong box name! Nothing was changed."), QMessageBox::Ok, 0);
-			}
-		}
-		else {
-			QMessageBox::warning(g_GUIParent, tr("Sandboxie-Plus Warning"), tr("User canceled this operation."), QMessageBox::Yes, 0);
-		}
+		CSandBoxPtr pBox = SelectBoxForShellAction(g_GUIParent);
+		if (pBox)
+			pBox->AppendText("OpenFilePath", Message.mid(8).replace("\"", ""));
 	}
 	else if (Message.left(4) == "Run:")
 	{

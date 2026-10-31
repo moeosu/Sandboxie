@@ -366,7 +366,6 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="Views\StackView.cpp" />
-
     <ClCompile Include="Views\TraceView.cpp">
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">input</DynamicSource>
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">%(Filename).moc</QtMocFileName>
@@ -382,6 +381,7 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="Windows\CompressDialog.cpp" />
+    <ClCompile Include="Windows\BorderFontDialog.cpp" />
     <ClCompile Include="Windows\ExtractDialog.cpp" />
     <ClCompile Include="Windows\RenameSandboxDialog.cpp" />
     <ClCompile Include="Windows\OptionsAccess.cpp">
@@ -496,6 +496,7 @@
     <ClCompile Include="Windows\PopUpWindow.cpp" />
     <ClCompile Include="Windows\RecoveryWindow.cpp" />
     <ClCompile Include="Windows\SelectBoxWindow.cpp" />
+    <ClCompile Include="Windows\ShellBoxSelector.cpp" />
     <ClCompile Include="Windows\SettingsWindow.cpp" />
     <ClCompile Include="Windows\SnapshotsWindow.cpp" />
     <ClCompile Include="Windows\SupportDialog.cpp" />
@@ -522,7 +523,6 @@
     <QtMoc Include="Wizards\SetupWizard.h" />
     <QtMoc Include="Windows\SelectBoxWindow.h" />
     <QtMoc Include="Views\TraceView.h" />
-
     <QtMoc Include="Windows\RecoveryWindow.h" />
     <QtMoc Include="Windows\PopUpWindow.h" />
     <QtMoc Include="Windows\SnapshotsWindow.h" />
@@ -534,6 +534,7 @@
     <QtMoc Include="Models\SbieModel.h" />
     <QtMoc Include="Models\TraceModel.h" />
     <QtMoc Include="BoxJob.h" />
+    <ClInclude Include="Windows\BorderFontDialog.h" />
     <ClInclude Include="..\version.h" />
     <QtMoc Include="BoxMonitor.h" />
     <QtMoc Include="Engine\BoxEngine.h" />
@@ -553,6 +554,7 @@
     <ClInclude Include="Helpers\ReadDirectoryChangesPrivate.h" />
     <ClInclude Include="Helpers\StorageInfo.h" />
     <ClInclude Include="Windows\PendingChanges.h" />
+    <ClInclude Include="Windows\ShellBoxSelector.h" />
     <ClInclude Include="Helpers\TabOrder.h" />
     <ClInclude Include="Helpers\ThreadSafeQueue.h" />
     <ClInclude Include="Helpers\WinAdmin.h" />
@@ -585,12 +587,14 @@
     <QtUic Include="Forms\PopUpWindow.ui" />
     <QtUic Include="Forms\RecoveryWindow.ui" />
     <QtUic Include="Forms\SelectBoxWindow.ui" />
+    <QtUic Include="Forms\ShellBoxSelector.ui" />
     <QtUic Include="Forms\SettingsWindow.ui" />
     <QtUic Include="Forms\SnapshotsWindow.ui" />
     <QtUic Include="Forms\TestProxyDialog.ui" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\finder.cur" />
+    <None Include="sandman_ar.ts" />
     <None Include="sandman_cs.ts" />
     <None Include="sandman_de.ts" />
     <None Include="sandman_en.ts" />

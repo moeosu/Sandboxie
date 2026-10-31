@@ -32,10 +32,12 @@ HEADERS += ./stdafx.h \
     ./Windows/PopUpWindow.h \
     ./Windows/SnapshotsWindow.h \
     ./Windows/SettingsWindow.h \
+    ./Windows/BorderFontDialog.h \
     ./Windows/OptionsWindow.h \
     ./Windows/PendingChanges.h \
     ./Windows/EditorSettingsWindow.h \
     ./Windows/SelectBoxWindow.h \
+    ./Windows/ShellBoxSelector.h \
     ./Windows/SupportDialog.h \
     ./Windows/TestProxyDialog.h \
     ./OnlineUpdater.h \
@@ -88,6 +90,7 @@ SOURCES += ./main.cpp \
     ./Helpers/WindowFromPointEx.cpp \
     ./Helpers/TabOrder.cpp \
     ./Helpers/MiniDumpFilter.cpp \
+    ./Windows/BorderFontDialog.cpp \
     ./Windows/OptionsWindow.cpp \
     ./Windows/EditorSettingsWindow.cpp \
     ./Windows/PopUpWindow.cpp \
@@ -95,6 +98,7 @@ SOURCES += ./main.cpp \
     ./Windows/SettingsWindow.cpp \
     ./Windows/SnapshotsWindow.cpp \
     ./Windows/SelectBoxWindow.cpp \
+    ./Windows/ShellBoxSelector.cpp \
     ./Windows/SupportDialog.cpp \
     ./Windows/TestProxyDialog.cpp \
     ./OnlineUpdater.cpp \
@@ -118,6 +122,7 @@ SOURCES += ./main.cpp \
 
 FORMS += ./Forms/EditorSettingsWindow.ui \
     ./Forms/SelectBoxWindow.ui \
+    ./Forms/ShellBoxSelector.ui \
     ./Forms/OptionsWindow.ui \
     ./Forms/PopUpWindow.ui \
     ./Forms/RecoveryWindow.ui \
